@@ -114,12 +114,14 @@ class SpectHRDataset:
         
         if not self.datadir:
             self.datadir=os.getcwd()
-            
-        if not Path(self.datadir + '\\cache').exists():
-            logger.info(f'Creating cache dir: {self.datadir + '\\cache'}')
-            os.makedirs(self.datadir + '\\cache')
-            
-        self.pkl_path = os.path.join(self.datadir + '\\cache', self.pkl_filename)
+
+        cache_dir = Path(self.datadir) / 'cache'
+
+        if not cache_dir.exists():
+            logger.info(f'Creating cache dir: {cache_dir}')
+            cache_dir.mkdir(parents=True)            
+
+        self.pkl_path = os.path.join(cache_dir, self.pkl_filename)
 
         if use_webdav:
             if not Path(self.file_path).exists():
