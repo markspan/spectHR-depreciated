@@ -114,7 +114,7 @@ class SpectHRDataset:
         
         if not self.datadir:
             self.datadir=os.getcwd()
-            
+
         cache_dir = Path(self.datadir) / 'cache'
 
         if not cache_dir.exists():
