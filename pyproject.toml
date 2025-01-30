@@ -1,13 +1,51 @@
-[build-system]
-requires = ["setuptools", "wheel"]
-build-backend = "setuptools.build_meta"
+[tool.poetry]
+name = "spectHR"
+version = "0.1.2c"
+description = "HRApp: An Interactive Heart Rate Variability (HRV) Analysis Tool"
+authors = ["Mark Span <m.m.span@rug.nl>"]
+license = "GPL-2.0-only"
+readme = "README.md"
+keywords = ["data analysis", "psychophysiology", "heart rate variability"]
+classifiers = [
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+    "Topic :: Scientific/Engineering :: Medical Science Apps.",
+    "Topic :: Scientific/Engineering :: Visualization"
+]
+homepage = "https://github.com/MarkSpan/spectHR"
 
-[tool.setuptools]
-packages = ["spectHR"]
+[[tool.poetry.source]]
+name = "PyPi"
+
+[tool.poetry.dependencies]
+python = ">=3.10"
+ipython = "*"
+ipympl = "*"
+ipyvuetify = "*"
+ipywidgets = "*"
+jupyter = "*"
+jupyterlab = "*"
+matplotlib = "*"
+mplcursors = "*"
+numpy = "*"
+pandas = "*"
+pyxdf = "*"
+scipy = "*"
+seaborn = "*"
+wheel = "*"
+pyhrv = "*"
+easywebdav = "*"
+
+[tool.poetry.dev-dependencies]
+setuptools-scm = "*"
+setuptools = "*"
+
+[tool.poetry.scripts]
+install-spectHR-notebooks = "spectHR.install_notebook:install_notebook"
 
 [project]
 name = "spectHR"
-version = "0.1.1b"
+dynamic = ["version"]
 description = "HRApp: An Interactive Heart Rate Variability (HRV) Analysis Tool"
 readme = "README.md"
 license = {text = "GPL-2.0-only"}
@@ -34,5 +72,15 @@ dependencies = [
     "easywebdav",
 ]
 
+[tool.setuptools_scm]
+version_file = "_version.py"
+
 [project.urls]
-Homepage = "https://github.com/ArjanOnGithup/Experimental-Skills"
+Homepage = "https://github.com/MarkSpan/spectHR"
+
+[project.entry-points.console_scripts]
+install-spectHR-notebooks = "spectHR.install_notebook:install_notebook"
+
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
