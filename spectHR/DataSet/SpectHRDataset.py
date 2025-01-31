@@ -89,45 +89,64 @@ class SpectHRDataset:
     """
     def __init__(self, filename, ecg_index=None, br_index=None, event_index=None, par=None, reset = False, use_webdav = False, flip = False):
         """
-        Initializes the SpectHRDataset by loading data from a file.
+        Initializes the SpectHRDataset by loading physiological data from a file.
+        
+        The constructor handles loading data from an XDF or raw text file, using cached pickle files when available. 
+        It also manages dataset parameters, directory structures, and optional WebDAV-based file retrieval.
 
         Args:
-            filename (str): Path to the XDF file.
-            ecg_index (int, optional): Index of the ECG stream in the XDF file. Defaults to None.
-            br_index (int, optional): Index of the breathing stream in the XDF file. Defaults to None.
-            event_index (int, optional): Index of the event stream in the XDF file. Defaults to None.
-            par (dict, optional): Initial parameters for the dataset. Defaults to None.
+            filename (str): 
+                Path to the input file, which can be an XDF file containing multiple streams 
+                or a raw text file from a Polar device.
+            ecg_index (int, optional): 
+                Index of the ECG (Electrocardiogram) stream in the XDF file. Defaults to None.
+            br_index (int, optional): 
+                Index of the breathing (BR) stream in the XDF file. Defaults to None.
+            event_index (int, optional): 
+                Index of the event stream in the XDF file. Defaults to None.
+            par (dict, optional): 
+                Dictionary of initial parameters for the dataset. Defaults to an empty dictionary if None.
+            reset (bool, optional): 
+                If True, forces reloading the data from the original source file instead of using a cached pickle file. Defaults to False.
+            use_webdav (bool, optional): 
+                If True, attempts to download the file using WebDAV if it is not found locally. Defaults to False.
+            flip (bool, optional): 
+                If True, flips the signal orientation for compatibility with certain data sources. Defaults to False.
         """
-        self.ecg = None
-        self.br = None
-        self.bp = None
-        self.events = None
-
-        self.history = []
-        self.par = par if par is not None else {}
-        self.starttime = None
+        # Initialize dataset attributes
+        self.ecg = None  # ECG data
+        self.br = None  # Breathing data
+        self.bp = None  # Blood pressure data (if applicable)
+        self.events = None  # Event markers
+        self.history = []  # History of processing steps
+        self.par = par if par is not None else {}  # Dataset parameters
+        self.starttime = None  # Start time of the recording
         
-        self.datadir = os.path.dirname(filename)
-        self.filename = os.path.basename(filename)
-        self.pkl_filename = os.path.splitext(self.filename)[0] + ".pkl"
-        self.file_path = os.path.join(self.datadir, self.filename)
+        # Set up file paths and directories
+        self.datadir = os.path.dirname(filename)  # Directory of the input file
+        self.filename = os.path.basename(filename)  # Extract filename
+        self.pkl_filename = os.path.splitext(self.filename)[0] + ".pkl"  # Name for cached pickle file
+        self.file_path = os.path.join(self.datadir, self.filename)  # Full path to the input file
         
+        # Ensure a valid data directory
         if not self.datadir:
             self.datadir=os.getcwd()
-
+            
+        # Create a cache directory for storing preprocessed data
         cache_dir = Path(self.datadir) / 'cache'
 
         if not cache_dir.exists():
             logger.info(f'Creating cache dir: {cache_dir}')
             cache_dir.mkdir(parents=True)            
-
+        # Path to the cached pickle file
         self.pkl_path = os.path.join(cache_dir, self.pkl_filename)
-
+        
+        # Fetch the file via WebDAV if needed
         if use_webdav:
             if not Path(self.file_path).exists():
                 copyWebdav(self.file_path)
 
-        # Load data from pickle if available; otherwise, process the XDF file
+        # Load dataset from cache or process raw data (Real Raw (.txt) or XDF)
         if Path(self.pkl_path).exists() and not reset:
             logger.info(f"Loading dataset from pickle: {self.pkl_path}")
             self.load_from_pickle()
