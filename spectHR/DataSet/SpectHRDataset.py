@@ -106,7 +106,7 @@ class SpectHRDataset:
         self.history = []
         self.par = par if par is not None else {}
         self.starttime = None
-
+        
         self.datadir = os.path.dirname(filename)
         self.filename = os.path.basename(filename)
         self.pkl_filename = os.path.splitext(self.filename)[0] + ".pkl"
@@ -131,9 +131,13 @@ class SpectHRDataset:
         if Path(self.pkl_path).exists() and not reset:
             logger.info(f"Loading dataset from pickle: {self.pkl_path}")
             self.load_from_pickle()
-        elif Path(self.file_path).exists():
+        elif  self.file_path.endswith('.xdf') and Path(self.file_path).exists():
             logger.info(f"Loading dataset from XDF: {self.file_path}")
             self.loadData(self.file_path, ecg_index, br_index, event_index, flip=flip)
+            self.save()
+        elif  self.file_path.endswith('.txt') and Path(self.file_path).exists():
+            logger.info(f"Loading dataset from Raw Polar File: {self.file_path}")
+            self.loadRawPolar(self.file_path, flip=flip)
             self.save()
         else:
             logger.error(f"File {self.file_path} was not found")
@@ -160,7 +164,54 @@ class SpectHRDataset:
             logger.info("Dataset loaded successfully from pickle")
         except Exception as e:
             logger.error(f"Failed to load pickle file: {e}")
-            
+    
+    def loadRawPolar(self, filename, flip='auto'):
+        """
+        Loads raw Polar data from a CSV file into the dataset.
+    
+        Args:
+            filename (str): Path to the Polar data file (CSV).
+            flip (str or bool, optional): Determines whether to flip the ECG signal.
+                'auto' will flip if the signal appears inverted based on a heuristic.
+                True forces flipping, and False prevents it. Defaults to 'auto'.
+        """
+        logger.info('Loading Raw Polar Data')
+    
+        # Read raw data from CSV file
+        rawdata = pd.read_csv(filename, sep=';')
+    
+        # Extract ECG levels and timestamps
+        ecg_levels = rawdata.loc[:, "ecg [uV]"]
+        ecg_timestamps = rawdata.loc[:, "timestamp [ms]"] / 1000.0  # Convert ms to seconds
+    
+        # Set the start time based on the 130th sample
+        self.starttime = ecg_timestamps.iloc[0]
+        ecg_timestamps -= self.starttime  # Normalize timestamps
+    
+        # Determine if the ECG signal needs to be flipped based on signal characteristics
+        magic = abs(np.mean(ecg_levels) - np.min(ecg_levels)) / (abs(np.mean(ecg_levels) - np.max(ecg_levels)))
+        if (magic > 1.5 and flip == 'auto') or flip is True:
+            ecg_levels = -ecg_levels
+    
+        # Store ECG data as a TimeSeries object
+        self.ecg = TimeSeries(ecg_timestamps, ecg_levels)
+    
+        # Create event timestamps and labels
+        event_timestamps = pd.Series([ecg_timestamps.iloc[0], ecg_timestamps.iloc[-1]])
+        event_labels = pd.Series(['start series', 'end series'])
+        
+        # Create DataFrame for events: this creates an epoch as large as the dataset
+        eventlist = []
+        ievents = pd.DataFrame({
+            'time': event_timestamps,
+            'label': event_labels
+        })
+        eventlist.append(ievents)
+    
+        # Concatenate events and store them
+        self.events = pd.concat(eventlist, ignore_index=True)
+        self.create_epoch_series()        
+        
     def loadData(self, filename, ecg_index=None, br_index=None, bp_index=None, event_index=None, flip = 'auto'):
         """
         Loads data from an XDF file into the dataset.
