@@ -72,6 +72,8 @@ def prepPlot(data, x_min=None, x_max=None, plot_poincare=False):
             plot_breathing_rate(
                 ax_br, data.br.time, data.br.level, x_min, x_max, line_handler
             )
+        data.x_min = x_min
+        data.x_max = x_max
         fig.canvas.draw_idle()
 
     def on_press(event):
@@ -439,9 +441,13 @@ def prepPlot(data, x_min=None, x_max=None, plot_poincare=False):
     plt.title("")
 
     # Initialize x-axis limits based on input or data
+
     x_min = x_min if x_min is not None else data.ecg.time.min()
     x_max = x_max if x_max is not None else data.ecg.time.max()
-
+    
+    x_min = data.x_min if data.x_min is not None else x_min
+    x_max = data.x_max if data.x_max is not None else x_max
+    
     # Create figure and axis handles
     fig, ax_ecg, ax_overview, ax_br = create_figure_axes(data)
 

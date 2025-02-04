@@ -121,7 +121,8 @@ class SpectHRDataset:
         self.history = []  # History of processing steps
         self.par = par if par is not None else {}  # Dataset parameters
         self.starttime = None  # Start time of the recording
-        
+        self.x_min = None
+        self.x_max = None
         # Set up file paths and directories
         self.datadir = os.path.dirname(filename)  # Directory of the input file
         self.filename = os.path.basename(filename)  # Extract filename
@@ -208,7 +209,10 @@ class SpectHRDataset:
         ecg_timestamps -= self.starttime  # Normalize timestamps
     
         # Determine if the ECG signal needs to be flipped based on signal characteristics
-        magic = abs(np.mean(ecg_levels) - np.min(ecg_levels)) / (abs(np.mean(ecg_levels) - np.max(ecg_levels)))
+        l = len(ecg_levels)/3
+        ml = ecg_levels.loc[l:2*l]
+        magic = abs(np.mean(ml) - np.min(ml)) / (abs(np.mean(ml) - np.max(ml)))
+        print(f"Magic is {magic}")
         if (magic > 1.5 and flip == 'auto') or flip is True:
             ecg_levels = -ecg_levels
     

@@ -26,7 +26,7 @@ def HRApp(DataSet):
     """
     
     # Create the initial preprocessing GUI using spectHR's prepPlot method
-    GUI = cs.prepPlot(DataSet, 500, 700)  # Set dimensions for the preprocessing GUI
+    GUI = cs.prepPlot(DataSet)  # Set dimensions for the preprocessing GUI
     
     # Initialize Output widgets for different tabs
     preProcessing = Output()
