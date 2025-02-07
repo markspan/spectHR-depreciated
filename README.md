@@ -208,15 +208,11 @@ Usage:
 
 Affects the boundaries of normal IBIs:
 
-The lower threshold is calculated as:
+The thresholds are calculated as:
 
-```math
-lower = avIBIr - (Nsd * SD(avIBI)r)`
-```
-The upper threshold is:
-```math
-higher = avIBIr + (Nsd * SD(avIBI)r)`
-```
+$$
+lower,upper = avIBIr ± (Nsd * SD(avIBI)r)`
+$$
 
 Higher values of Nsd result in wider thresholds, reducing sensitivity to variations, while lower values make the classification more sensitive to smaller deviations.
 
@@ -278,14 +274,14 @@ In `spectHR`, Poincaré plots help assess the regularity and variability of the 
 
 Given a sequence of inter-beat intervals (IBI):
 
-```math
+$$
 IBI_1, IBI_2, IBI_3, \dots, IBI_n
-```
+$$
 Then: 
 
-```math
+$$
 (IBI_i, IBI_{i+1})
-```
+$$
 
 creates a scatter plot where the x-axis represents  (current interval) and the y-axis represents  (next interval).
 
@@ -309,9 +305,9 @@ Represents short-term HRV, reflecting beat-to-beat variability.
 
 Formula:
 
-```math
+$$
 SD_1 = \sqrt{\frac{1}{2} \text{Var}(IBI_{i+1} - IBI_i)}
-```
+$$
 
 #### SD<sub>2</sub> (Long-term Variability)
 
@@ -321,16 +317,16 @@ Represents long-term HRV, capturing overall variability of the IBIs.
 
 Formula:
 
-```math
+$$
 SD_2 = \sqrt{2 \cdot \text{Var}(IBI_i) - \frac{1}{2} \text{Var}(IBI_{i+1} - IBI_i)}
-```
+$$
 
 #### SD<sub>2</sub>/SD<sub>1</sub> Ratio
 
 The ratio between SD<sub>1</sub> and SD<sub>2</sub> is used to analyze the balance between short-term and long-term HRV.
-```math
+$$
  SD_{ratio} = \frac{SD_2}{SD_1}
-```
+$$
 
 #### Ellipse Fitting
 
@@ -341,9 +337,9 @@ SD<sub>1</sub> corresponds to the width of the ellipse (short axis).
 SD<sub>2</sub> corresponds to the length of the ellipse (long axis).
 The area of the ellipse is often calculated as:
 
-```math
+\[
 \text{Area} = \pi \cdot SD_1 \cdot SD_2
-```
+\]
 
 ---
 
