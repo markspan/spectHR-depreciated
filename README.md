@@ -277,6 +277,7 @@ Given a sequence of inter-beat intervals (IBI):
 $$
 IBI_1, IBI_2, IBI_3, \dots, IBI_n
 $$
+
 Then: 
 
 $$
@@ -324,6 +325,7 @@ $$
 #### SD<sub>2</sub>/SD<sub>1</sub> Ratio
 
 The ratio between SD<sub>1</sub> and SD<sub>2</sub> is used to analyze the balance between short-term and long-term HRV.
+
 $$
  SD_{ratio} = \frac{SD_2}{SD_1}
 $$
@@ -337,9 +339,9 @@ SD<sub>1</sub> corresponds to the width of the ellipse (short axis).
 SD<sub>2</sub> corresponds to the length of the ellipse (long axis).
 The area of the ellipse is often calculated as:
 
-\[
+$$
 \text{Area} = \pi \cdot SD_1 \cdot SD_2
-\]
+$$
 
 ---
 
