@@ -80,7 +80,6 @@ setup(
         "scipy",
         "seaborn",
         "wheel",
-        "pyhrv",
         "easywebdav",
     ],
     cmdclass={"install": PostInstallCommand},  # Runs post-install command

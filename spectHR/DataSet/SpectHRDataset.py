@@ -159,6 +159,10 @@ class SpectHRDataset:
             logger.info(f"Loading dataset from Raw Polar File: {self.file_path}")
             self.loadRawPolar(self.file_path, flip=flip)
             self.save()
+        elif self.file_path.endswith('._csv') and Path(self.file_path).exists():
+            logger.info(f"Loading dataset from Raw Harness File: {self.file_path}")
+            self.loadRawHarness(self.file_path, flip=flip)
+            self.save()
         else:
             logger.error(f"File {self.file_path} was not found")
 
@@ -218,6 +222,67 @@ class SpectHRDataset:
     
         # Store ECG data as a TimeSeries object
         self.ecg = TimeSeries(ecg_timestamps, ecg_levels)
+    
+        # Create event timestamps and labels
+        event_timestamps = pd.Series([ecg_timestamps.iloc[0], ecg_timestamps.iloc[-1]])
+        event_labels = pd.Series(['start series', 'end series'])
+        
+        # Create DataFrame for events: this creates an epoch as large as the dataset
+        eventlist = []
+        ievents = pd.DataFrame({
+            'time': event_timestamps,
+            'label': event_labels
+        })
+        eventlist.append(ievents)
+    
+        # Concatenate events and store them
+        self.events = pd.concat(eventlist, ignore_index=True)
+        self.create_epoch_series()        
+
+    def loadRawHarness(self, filename, flip='auto'):
+        """
+        Loads raw data from a CSV file into the dataset.
+        ref the Harness
+        
+        Args:
+            filename (str): Path to the Polar data file (CSV).
+            flip (str or bool, optional): Determines whether to flip the ECG signal.
+                'auto' will flip if the signal appears inverted based on a heuristic.
+                True forces flipping, and False prevents it. Defaults to 'auto'.
+        """
+        logger.info('Loading Raw New Harness Data')
+        # Read raw data from CSV file
+        rawdata = pd.read_csv(filename, sep=',')
+        rawdata.columns = rawdata.columns.str.strip()  # This will remove any leading/trailing spaces
+        # Extract ECG levels and timestamps
+        ecg_levels = rawdata.loc[:, "ECG Data"].replace(-1, pd.NA).astype("float32") * 40
+        rawdata['ms'] = rawdata['ms'].replace(-1, pd.NA).astype(float)
+        rawdata['ms'] = rawdata['ms'].interpolate(method='linear')
+        ecg_timestamps = rawdata.loc[:, "ms"] / 1000.0  # Convert ms to seconds
+        self.starttime = ecg_timestamps.iloc[0]
+        ecg_timestamps -= self.starttime  # Normalize timestamps
+
+        # autodistance the time.
+        timestamp_diff = np.diff(ecg_timestamps.dropna())  # Drop NA values for diff calculation
+
+        # Calculate the median difference
+        median_diff = np.median(timestamp_diff)
+        n = len(ecg_timestamps)
+        start = 0
+        end = start + median_diff * (n - 1)
+
+        ecg_timestamps = pd.Series(np.arange(start, end + median_diff, median_diff))
+  
+        # Determine if the ECG signal needs to be flipped based on signal characteristics
+        l = len(ecg_levels)/3
+        ml = ecg_levels.loc[l:2*l]
+        magic = abs(np.mean(ml) - np.min(ml)) / (abs(np.mean(ml) - np.max(ml)))
+        print(f"Magic is {magic}")
+        if (magic > 1.5 and flip == 'auto') or flip is True:
+            ecg_levels = -ecg_levels
+    
+        # Store ECG data as a TimeSeries object
+        self.ecg = TimeSeries(ecg_timestamps, ecg_levels - ecg_levels.mean())
     
         # Create event timestamps and labels
         event_timestamps = pd.Series([ecg_timestamps.iloc[0], ecg_timestamps.iloc[-1]])

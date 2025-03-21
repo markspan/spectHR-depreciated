@@ -118,7 +118,7 @@ def filterECGData(DataSet, par=None):
     passband = normal_cutoff * 1.1
     stopband = normal_cutoff / 1.5
 
-    N, wn = signal.buttord(passband, stopband, 3,40)
+    N, wn = signal.buttord(passband, stopband, 3, 40)
     logger.info(f'creating a filter with order {N} , passband at {passband*nyquist}')
     # Example: lowpass or highpass filter
     if par['filterType'] == 'lowpass':
