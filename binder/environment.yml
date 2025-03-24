@@ -10,13 +10,13 @@ dependencies:
   - ipyvuetify
   - ipywidgets
   - jupyter
-  - jupyterlab >=4.0.0
+  - jupyterlab
   - matplotlib
   - mplcursors
   - numpy
   - pandas
   - pip
-  - python >=3.10
+  - python
   - scipy
   - setuptools_scm
   - voila
@@ -25,5 +25,5 @@ dependencies:
   - wheel
   - nb_conda_kernels
   - pip:
-    - spectHR >=0.1.10
+    - spectHR>=0.1.10
 
