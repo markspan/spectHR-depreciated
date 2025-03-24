@@ -18,6 +18,7 @@ dependencies:
   - pip
   - python >=3.10
   - scipy
+  - setuptools_scm
   - voila
   - voila-gridstack
   - seaborn
