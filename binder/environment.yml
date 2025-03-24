@@ -9,7 +9,6 @@ dependencies:
   - ipympl
   - ipyvuetify
   - ipywidgets
-  - jupyter
   - jupyterlab
   - matplotlib
   - mplcursors
@@ -18,12 +17,7 @@ dependencies:
   - pip
   - python
   - scipy
-  - setuptools_scm
-  - voila
-  - voila-gridstack
-  - seaborn
   - wheel
-  - nb_conda_kernels
   - pip:
     - spectHR>=0.1.10
 
