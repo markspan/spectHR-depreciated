@@ -23,12 +23,17 @@ def install_notebook():
     """Copies Jupyter notebooks to the user's home directory."""
     notebook_src = Path(__file__).parent / "spectHR/notebooks/SpectHR.ipynb"
     notebook_dest = Path.home() / "SpectHR.ipynb"
-    
+    data_src =  Path(__file__).parent / "SUB_002.xdf"
     if notebook_src.exists():
         shutil.copy(notebook_src, notebook_dest)
         print(f"Notebook copied to {notebook_dest}")
     else:
         print("Notebook file not found!")
+    if data_src.exists():
+        shutil.copy(data_src, Path.home())
+        print(f"Data copied to {Path.home()}")
+    else:
+        print("Example data file not copied!")
 
 class PostInstallCommand(install):
     """Post-installation command to copy Jupyter notebooks."""
@@ -62,7 +67,7 @@ setup(
     python_requires=">=3.10",
     packages=find_packages() + ["spectHR.images", "spectHR.notebooks"],
     package_data={
-        'spectHR': ['spectHR/images/*', 'spectHR/notebooks/*'],
+        'spectHR': ['spectHR/images/*', 'spectHR/notebooks/*', 'SUB_002.xdf'],
     },
     include_package_data=True,
     install_requires=[

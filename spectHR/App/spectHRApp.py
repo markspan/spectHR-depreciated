@@ -3,7 +3,6 @@ from spectHR.Tools.Logger import logger
 from ipywidgets import Tab, Output, VBox
 import ipyvuetify as v
 import pandas as pd
-import pyhrv
 import os
 
 def HRApp(DataSet):
@@ -90,8 +89,8 @@ def HRApp(DataSet):
                         ('std', 'std'),\
                         ('min', 'min'),\
                         ('max', 'max'),\
-                        ('rmssd', lambda x: pyhrv.time_domain.rmssd(x)[0]), \
-                        ('sdnn', lambda x: pyhrv.time_domain.sdnn(x)[0]),\
+                        ('rmssd', cs.Tools.Params.rmssd),\
+                        ('sdnn', cs.Tools.Params.sdnn),\
                         ('sdsd', cs.Tools.Params.sdsd),\
                         ('sd1', cs.Tools.Params.sd1),\
                         ('sd2', cs.Tools.Params.sd2),\

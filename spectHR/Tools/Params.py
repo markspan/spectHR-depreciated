@@ -1,4 +1,16 @@
 import numpy as np
+
+def rmssd(ibi):
+    ibi = np.asarray(ibi)
+    nnd = np.diff(ibi)
+    rmssd = np.sum([x**2 for x in nnd])
+    rmssd = np.sqrt(1. / nnd.size * rmssd)
+    return rmssd
+
+def sdnn(ibi):
+    ibi = np.asarray(ibi)
+    return np.std(ibi)
+
 def sd1(ibi):
     """
     Calculate the SD1 index, which is a measure of short-term variability 
