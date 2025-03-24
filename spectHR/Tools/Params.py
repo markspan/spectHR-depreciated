@@ -1,6 +1,4 @@
 import numpy as np
-import pyhrv
-
 def sd1(ibi):
     """
     Calculate the SD1 index, which is a measure of short-term variability 
@@ -77,7 +75,8 @@ def sdsd(ibi):
         float: The SDSD value, representing the variability in the successive differences of IBIs.
     """
     try:
-        ret = pyhrv.time_domain.sdsd(np.asarray(ibi))[0]
+        ibi = np.asarray(ibi)
+        ret = np.std(np.diff(ibi))
     except Exception as e:
         # If calculation fails, return NaN
         ret = np.nan
