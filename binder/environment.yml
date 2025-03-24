@@ -1,7 +1,0 @@
-name: spectHR
-channels:
-  - conda-forge
-dependencies:
-  - jupyterlab
-  - pip:
-    - spectHR
