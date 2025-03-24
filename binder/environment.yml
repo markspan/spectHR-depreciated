@@ -2,14 +2,6 @@ name: spectHR
 channels:
   - conda-forge
 dependencies:
-  - ipython
-  - ipympl
-  - ipyvuetify
-  - ipywidgets
   - jupyterlab
-  - matplotlib
-  - mplcursors
-  - numpy
-  - pandas
-  - python
-  - scipy
+  - pip:
+    -spectHR
