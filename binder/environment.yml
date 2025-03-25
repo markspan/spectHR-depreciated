@@ -1,4 +1,4 @@
-name: spectHRDev
+name: spectHR
 channels:
   - conda-forge
   - anaconda
@@ -9,15 +9,16 @@ dependencies:
   - ipympl
   - ipyvuetify
   - ipywidgets
-  - jupyter
-  - jupyterlab >=4.0.0
-  - matplotlib
+  - jupyter>=1.0
+  - jupyterlab>=4.0.0
+  - matplotlib>=3.1.2
   - mplcursors
-  - numpy
+  - numpy>=1.17
   - pandas
   - pip
-  - python >=3.10
-  - scipy
+  - pillow>=6.2
+  - python>=3.10
+  - scipy>=1.3.2
   - voila
   - voila-gridstack
   - seaborn
@@ -25,4 +26,4 @@ dependencies:
   - nb_conda_kernels
   - pip:
     - spectHR >=0.1.10
-
+    - jupytercontrib>=0.0.7
