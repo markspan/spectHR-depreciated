@@ -1,3 +1,0 @@
-msttcorefonts
-font-manager
-git
