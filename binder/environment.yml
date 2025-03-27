@@ -4,7 +4,6 @@ channels:
   - anaconda
 dependencies:
   - mamba
-  - easywebdav
   - ipython
   - ipympl
   - ipyvuetify
