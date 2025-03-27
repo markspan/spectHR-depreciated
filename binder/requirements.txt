@@ -1,4 +1,0 @@
-spectHR
-easywebdav
-jupytercontrib
-

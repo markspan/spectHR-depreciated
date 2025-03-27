@@ -23,3 +23,7 @@ dependencies:
   - voila-gridstack
   - seaborn
   - wheel
+  - pip:
+    - spectHR
+    - easywebdav
+    - jupytercontrib
