@@ -17,7 +17,7 @@ dependencies:
   - pandas
   - pip
   - pillow
-  - python
+  - python>=3.6
   - pyxdf
   - scipy
   - voila
