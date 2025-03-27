@@ -3,6 +3,7 @@ channels:
   - conda-forge
   - anaconda
 dependencies:
+  - easywebdav
   - ipython
   - ipympl
   - ipyvuetify
@@ -16,6 +17,7 @@ dependencies:
   - pip
   - pillow
   - python
+  - pyxdf
   - scipy
   - voila
   - voila-gridstack
