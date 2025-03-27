@@ -1,2 +1,3 @@
 spectHR
+easywebdav
 jupytercontrib
