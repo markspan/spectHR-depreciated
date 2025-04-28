@@ -65,6 +65,7 @@ def prepPlot(data, x_min=None, x_max=None, plot_poincare=False):
                 )  # Plot VLines in the current view, if there are less then 100
 
             ax_ecg.set_ylim(ax_ecg.get_ylim()[0], ax_ecg.get_ylim()[1] * 1.2)
+
         set_ecg_plot_properties(ax_ecg, x_min, x_max)
 
         # Plot the breathing rate if available in the data
@@ -72,6 +73,8 @@ def prepPlot(data, x_min=None, x_max=None, plot_poincare=False):
             plot_breathing_rate(
                 ax_br, data.br.time, data.br.level, x_min, x_max, line_handler
             )
+            set_br_plot_properties(ax_br, x_min, x_max)
+            
         data.x_min = x_min
         data.x_max = x_max
         fig.canvas.draw_idle()
@@ -156,21 +159,11 @@ def prepPlot(data, x_min=None, x_max=None, plot_poincare=False):
         figsize = calculate_figsize()
 
         if data.br is not None:
-            fig, (ax_ecg, ax_overview, ax_br) = plt.subplots(
-                3,
-                1,
-                figsize=figsize,
-                sharex=True,
-                gridspec_kw={"height_ratios": [4, 1, 2]},
-            )
+            fig, (ax_ecg, ax_br, ax_overview) = plt.subplots(3, 1,
+                figsize=figsize, sharex=False, gridspec_kw={"height_ratios": [4, 1, 1]})
         else:
-            fig, (ax_ecg, ax_overview) = plt.subplots(
-                2,
-                1,
-                figsize=figsize,
-                sharex=False,
-                gridspec_kw={"height_ratios": [4, 1]},
-            )
+            fig, (ax_ecg, ax_overview) = plt.subplots(2, 1,
+                figsize=figsize, sharex=False, gridspec_kw={"height_ratios": [4, 1]})
             ax_br = None
         return fig, ax_ecg, ax_overview, ax_br
 
@@ -238,47 +231,45 @@ def prepPlot(data, x_min=None, x_max=None, plot_poincare=False):
         """
         Configure ECG plot properties.
         """
-        #ldisp = int(math.log10(abs(data.ecg.level.max() - data.ecg.level.min())))
         tdisp = round(math.log10(x_max - x_min), 0)
 
         ax.set_title("")
         ax.set_xlabel("Time (seconds)")
         ax.set_xlim(x_min, x_max)
-        ax.xaxis.set_major_locator(
-            MultipleLocator(math.pow(10, tdisp - 1))
-        )  # Major ticks every 1 second
-        ax.xaxis.set_minor_locator(
-            MultipleLocator(math.pow(10, tdisp - 1) / 5)
-        )  # Minor ticks every 0.2 seconds
-        #ax.xaxis.grid(which="minor", color="salmon", lw=0.3)
-        #ax.xaxis.grid(which="major", color="r", lw=0.7)
+        ax.xaxis.set_major_locator(MultipleLocator(math.pow(10, tdisp - 1)))  # Major ticks every 1 second
+        ax.xaxis.set_minor_locator(MultipleLocator(math.pow(10, tdisp - 1) / 5))  # Minor ticks every 0.2 seconds
         ax.get_yaxis().set_visible(False)
         ax.spines[["right", "left", "top"]].set_visible(False)
-        #ax.grid(False, "major", alpha=0.3)
-        #ax.grid(False, "minor", alpha=0.2)
+        
+    def set_br_plot_properties(ax, x_min, x_max):
+        """
+        Configure ECG plot properties.
+        """
+        tdisp = round(math.log10(x_max - x_min), 0)
+
+        ax.set_title("")
+        ax.set_xlabel("Time (seconds)")
+        ax.set_xlim(x_min, x_max)
+        ax.xaxis.set_major_locator(MultipleLocator(math.pow(10, tdisp - 1)))  # Major ticks every 1 second
+        ax.xaxis.set_minor_locator(MultipleLocator(math.pow(10, tdisp - 1) / 5))  # Minor ticks every 0.2 seconds
+        ax.get_yaxis().set_visible(False)
+        ax.spines[["right", "left", "top"]].set_visible(False)
 
     def plot_ecg_signal(ax, ecg_time, ecg_level):
         """
         Plot the ECG signal on the provided axis.
         """
         ax.clear()
-        ax.plot(
-            ecg_time,
-            ecg_level,
-            label="ECG Signal",
-            color="red",
-            linewidth=.8,
-            alpha=1,
-        )
+        ax.plot(ecg_time, ecg_level, label="ECG Signal", color="red", linewidth=.8, alpha=1)
+        ax.set_xlim(x_min, x_max)
 
     def plot_breathing_rate(ax, br_time, br_level, x_min, x_max, line_handler):
         """
         Plot breathing rate data on a separate axis.
         """
         ax.clear()
-        ax.plot(br_time, br_level, label="Breathing Signal", color="green")
-        ax.set_ylabel("Breathing Level")
-        ax.grid(True)
+        ax.plot(br_time, br_level, label="Breathing Signal", color="green", linewidth=.8, alpha=1)
+        ax.set_xlim(x_min, x_max)
 
     def update_view():
         """
@@ -455,13 +446,9 @@ def prepPlot(data, x_min=None, x_max=None, plot_poincare=False):
     fig.canvas.header_visible = False
     fig.tight_layout()
 
-    line_handler = LineHandler(
-        ax_ecg, callback_drag=update_rtop, callback_remove=remove_rtop
-    )
+    line_handler = LineHandler(ax_ecg, callback_drag=update_rtop, callback_remove=remove_rtop)
     # area_handler = AreaHandler(fig, ax_ecg)
-    positional_patch = plot_overview(
-        ax_overview, data.ecg.time, data.ecg.level, x_min, x_max
-    )
+    positional_patch = plot_overview(ax_overview, data.ecg.time, data.ecg.level, x_min, x_max)
 
     # State variables for dragging
     drag_mode = None
