@@ -23,7 +23,7 @@ def install_notebook():
     """Copies Jupyter notebooks to the user's home directory."""
     notebook_src = Path(__file__).parent / "spectHR/notebooks/SpectHR.ipynb"
     notebook_dest = Path.home() / "SpectHR.ipynb"
-    data_src =  Path(__file__).parent / "SUB_002.xdf"
+    data_src =  Path(__file__).parent / "sub001.xdf"
     if notebook_src.exists():
         shutil.copy(notebook_src, notebook_dest)
         print(f"Notebook copied to {notebook_dest}")

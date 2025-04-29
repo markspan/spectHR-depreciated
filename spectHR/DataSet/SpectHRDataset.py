@@ -4,10 +4,10 @@ import pyxdf
 import os
 from pathlib import Path
 import pickle
-from scipy.signal import butter, filtfilt, find_peaks
 from datetime import datetime
 from spectHR.Tools.Logger import logger
 from spectHR.Tools.Webdav import copyWebdav
+from spectHR.Actions.csBreathing import calculate_breathing_signal
 
 class TimeSeries:
     """
@@ -350,8 +350,7 @@ class SpectHRDataset:
             logger.info("Expecting Breathing data")       
             br_timestamps = pd.Series(rawdata[br_index]["time_stamps"])
             br_data = rawdata[br_index]["time_series"]
-            br_levels = self.calculate_breathing_signal(br_data)
-            # br_levels = pd.Series(rawdata[br_index]["time_series"].flatten())
+            br_levels = calculate_breathing_signal(br_data, 200)
             br_timestamps -= self.starttime
             self.br = TimeSeries(br_timestamps, br_levels)
 
@@ -437,57 +436,6 @@ class SpectHRDataset:
                 
         self.unique_epochs = self.get_unique_epochs()
         
-    def calculate_breathing_signal(self, acc):
-        """
-        Calculate the breathing signal from raw accelerometer data.
-    
-        This method processes the 3-axis accelerometer values to extract a breathing-related
-        signal by:
-        1. Applying a low-pass filter (gravity filter) to isolate the gravitational component.
-        2. Subtracting the gravitational component to obtain dynamic acceleration.
-        3. Applying a second low-pass filter (noise filter) to the norm of the dynamic acceleration.
-    
-        Notes:
-        ------
-        - Assumes `acc` is an Nx3 array (samples x [X, Y, Z] axes).
-        - Sampling frequency is assumed to be 200 Hz (e.g., Polar H10 accelerometer).
-        """
-    
-        # Constants
-        sampling_freq = 200  # Hz, fixed for Polar H10
-        nyquist_freq = 0.5 * sampling_freq
-        gravity_cutoff_freq = 0.04  # Hz
-        noise_cutoff_freq = 0.5  # Hz
-        filter_order = 2
-    
-        # --- Step 1: Gravity Filter (very low-pass) ---
-        # Design low-pass Butterworth filter for gravity component
-        gravity_cutoff_norm = gravity_cutoff_freq / nyquist_freq
-        b_gravity, a_gravity = butter(filter_order, gravity_cutoff_norm, btype='low')
-    
-        # Apply gravity filter independently to each accelerometer axis
-        acc_low_pass = np.zeros_like(acc)
-        for axis in range(3):
-            acc_low_pass[:, axis] = filtfilt(b_gravity, a_gravity, acc[:, axis])
-    
-        # Compute the norm (magnitude) of the gravity component
-        acc_low_pass_norm = np.linalg.norm(acc_low_pass, axis=1)
-    
-        # --- Step 2: Dynamic Acceleration ---
-        # Remove the gravity component to get the dynamic movement
-        acc_values_filt = acc - acc_low_pass
-    
-        # Compute the norm of the dynamic acceleration
-        acc_values_filt_norm = np.linalg.norm(acc_values_filt, axis=1)
-    
-        # --- Step 3: Noise Filter (low-pass) ---
-        # Design second low-pass Butterworth filter for dynamic acceleration norm
-        noise_cutoff_norm = noise_cutoff_freq / nyquist_freq
-        b_noise, a_noise = butter(filter_order, noise_cutoff_norm, btype='low')
-    
-        # Apply the noise filter to obtain the breathing signal
-        return filtfilt(b_noise, a_noise, acc_values_filt_norm)
-
 
     def get_unique_epochs(self):
         """
