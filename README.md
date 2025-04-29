@@ -122,8 +122,40 @@ This tool is ideal for researchers, clinicians, and students who work with HRV d
 - **Spectral Analysis**: Perform cardiovascular spectral analysis to study heart rate variability and other metrics.
 
 
+## Breathing Signal Extraction
+
+This application includes functionality for estimating a breathing-related signal from raw 3-axis accelerometer data, such as that provided by the Polar H10 chest strap. The method is designed to isolate slow, periodic motion associated with breathing while minimizing the influence of gravitational and high-frequency components.
+
+### Method Overview
+
+The breathing signal is extracted using a two-stage filtering process applied to the accelerometer data:
+
+1. **Gravity Removal**  
+   A low-pass Butterworth filter with a cutoff frequency of 0.04 Hz is applied separately to each accelerometer axis to estimate the quasi-static gravitational component. This estimated gravity signal is then subtracted from each axis to isolate dynamic movement.
+
+2. **Dynamic Acceleration Norm**  
+   After gravity removal, the norm (Euclidean magnitude) of the dynamic acceleration vector is computed across the three axes. This produces a single scalar time series representing overall movement.
+
+3. **Low-Pass Filtering for Breathing Signal**  
+   To isolate breathing-related motion, a second low-pass Butterworth filter (cutoff 0.5 Hz) is applied to the dynamic acceleration norm. The resulting signal contains slow fluctuations likely associated with the respiratory cycle.
+
+### Assumptions
+
+- Input accelerometer data is sampled at 200 Hz.
+- Data is expected in the shape `(N, 3)` corresponding to `[X, Y, Z]` axes.
+- The subject wears the device in a stable orientation on the torso.
+
+### Example
+
+```python
+from yourmodule import calculate_breathing_signal
+breathing_signal = calculate_breathing_signal(acc_data, rate=200)
 
 ## Installation
+just pip install the package.
+
+```
+pip install spectHR
 
 ### Requirements
 
