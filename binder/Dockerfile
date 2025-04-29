@@ -1,6 +1,11 @@
 # Use a base image with a compatible Python version
 FROM python:3.10-slim
 
+# Install necessary system packages, including git
+RUN apt-get update && apt-get install -y \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
 # Set environment variables
 ENV PIP_TIMEOUT=60
 
