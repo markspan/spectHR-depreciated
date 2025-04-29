@@ -1,0 +1,11 @@
+#!/bin/bash
+set -e
+
+# Set environment variables
+export CONDA_RETRY_COUNT=5
+export CONDA_TIMEOUT=60
+
+# Update conda
+conda update -n base -c conda-forge conda
+
+# Continue with any other post-build steps if needed
