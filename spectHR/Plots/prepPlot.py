@@ -140,7 +140,7 @@ def prepPlot(data, x_min=None, x_max=None, plot_poincare=False):
     # Helper to get figure dimensions in inches
     def calculate_figsize():
         dpi = matplotlib.rcParams["figure.dpi"]  # Get the current DPI setting
-        return (19,4)
+        return (13,5)
 
     def create_figure_axes(data):
         """
@@ -160,7 +160,7 @@ def prepPlot(data, x_min=None, x_max=None, plot_poincare=False):
 
         if data.br is not None:
             fig, (ax_ecg, ax_br, ax_overview) = plt.subplots(3, 1,
-                figsize=figsize, sharex=False, gridspec_kw={"height_ratios": [4, 1, 1]})
+                figsize=figsize, sharex=False, gridspec_kw={"height_ratios": [6, 1, 1]})
         else:
             fig, (ax_ecg, ax_overview) = plt.subplots(2, 1,
                 figsize=figsize, sharex=False, gridspec_kw={"height_ratios": [4, 1]})
@@ -240,6 +240,10 @@ def prepPlot(data, x_min=None, x_max=None, plot_poincare=False):
         ax.xaxis.set_minor_locator(MultipleLocator(math.pow(10, tdisp - 1) / 5))  # Minor ticks every 0.2 seconds
         ax.get_yaxis().set_visible(False)
         ax.spines[["right", "left", "top"]].set_visible(False)
+        if ax_br is not None:
+            ax.get_xaxis().set_visible(False)
+            ax.spines[["bottom"]].set_visible(False)
+            ax.set_xlabel("")
         
     def set_br_plot_properties(ax, x_min, x_max):
         """

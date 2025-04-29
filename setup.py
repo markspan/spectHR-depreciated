@@ -67,7 +67,7 @@ setup(
     python_requires=">=3.10",
     packages=find_packages() + ["spectHR.images", "spectHR.notebooks"],
     package_data={
-        'spectHR': ['spectHR/images/*', 'spectHR/notebooks/*', 'SUB_002.xdf'],
+        'spectHR': ['spectHR/images/*', 'spectHR/notebooks/*', 'SUB_001.xdf', 'SUB_002.xdf'],
     },
     include_package_data=True,
     install_requires=[
