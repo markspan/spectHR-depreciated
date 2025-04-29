@@ -14,6 +14,9 @@ RUN if ! id -u $NB_USER >/dev/null 2>&1; then \
         chown $NB_USER:$NB_USER /home/$NB_USER; \
     fi
 
+# Install git
+RUN apt-get update && apt-get install -y git
+
 # Set environment variables for the user and home directory
 ENV USER ${NB_USER}
 ENV HOME /home/${NB_USER}
