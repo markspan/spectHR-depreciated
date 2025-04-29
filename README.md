@@ -150,13 +150,13 @@ The breathing signal is extracted using a two-stage filtering process applied to
 ```python
 from yourmodule import calculate_breathing_signal
 breathing_signal = calculate_breathing_signal(acc_data, rate=200)
-
+```
 ## Installation
 just pip install the package.
 
 ```
 pip install spectHR
-
+```
 ### Requirements
 
 - Python 3.7+
