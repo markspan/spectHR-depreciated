@@ -1,16 +1,18 @@
-# Use Alpine Linux as the base image
+# Use the Jupyter Docker stack foundation as the base image
 FROM jupyter/docker-stacks-foundation:latest
 
-# Create a user with a specific UID and home directory
+# Define arguments for the user and UID
 ARG NB_USER=jovyan
 ARG NB_UID=1000
 
-# Switch to root user to create the user and set the home directory
+# Switch to the root user to create the user and set the home directory if it doesn't exist
 USER root
-RUN addgroup --gid $NB_UID $NB_USER \
-    && adduser --disabled-password --gecos "" --ingroup $NB_USER --uid $NB_UID $NB_USER \
-    && mkdir -p /home/$NB_USER \
-    && chown $NB_USER:$NB_USER /home/$NB_USER
+RUN if ! id -u $NB_USER >/dev/null 2>&1; then \
+        addgroup --gid $NB_UID $NB_USER && \
+        adduser --disabled-password --gecos "" --ingroup $NB_USER --uid $NB_UID $NB_USER && \
+        mkdir -p /home/$NB_USER && \
+        chown $NB_USER:$NB_USER /home/$NB_USER; \
+    fi
 
 # Set environment variables for the user and home directory
 ENV USER ${NB_USER}
@@ -25,10 +27,10 @@ USER ${USER}
 # Expose the JupyterLab port
 EXPOSE 8888
 
-# Install spectHR from a specific source if needed
+# Install spectHR from a specific GitHub repository
 RUN pip install git+https://github.com/markspan/spectHR.git
 
-# Install spectHR from PyPI (uncomment if needed)
+# Alternatively, install spectHR from PyPI (uncomment if needed)
 # RUN pip install spectHR
 
 # Start JupyterLab
