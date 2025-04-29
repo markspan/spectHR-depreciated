@@ -1,27 +1,5 @@
 # Use Alpine Linux as the base image
-FROM alpine:3.16
-
-# Install necessary system packages
-RUN apk add --no-cache \
-    python3 \
-    py3-pip \
-    git \
-    bash \
-    build-base \
-    libffi-dev \
-    openssl-dev \
-    libxml2-dev \
-    libxslt-dev \
-    && rm -rf /var/cache/apk/*
-
-# Set environment variables
-ENV PYTHONUNBUFFERED=1 \
-    PIP_DISABLE_PIP_VERSION_CHECK=1 \
-    PIP_NO_CACHE_DIR=off
-
-# Upgrade pip and install JupyterLab
-RUN pip install --upgrade pip && \
-    pip install jupyterlab
+FROM jupyter/docker-stacks-foundation:latest
 
 # Create user with a home directory
 ARG NB_USER=jovyan
