@@ -5,7 +5,8 @@ FROM jupyter/docker-stacks-foundation:latest
 ARG NB_USER=jovyan
 ARG NB_UID=1000
 
-# Create the user and set the home directory as root
+# Switch to root user to create the user and set the home directory
+USER root
 RUN addgroup --gid $NB_UID $NB_USER \
     && adduser --disabled-password --gecos "" --ingroup $NB_USER --uid $NB_UID $NB_USER \
     && mkdir -p /home/$NB_USER \
