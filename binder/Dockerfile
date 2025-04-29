@@ -1,5 +1,5 @@
 # Use a base image with a compatible Python version
-FROM python:3.10-slim
+FROM alpine
 
 # Install necessary system packages, including git
 RUN apt-get update && apt-get install -y \
