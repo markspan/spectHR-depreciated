@@ -1,10 +1,11 @@
+# Use Alpine Linux as the base image
 FROM jupyter/docker-stacks-foundation:latest
 
 # Create a user with a specific UID and home directory
 ARG NB_USER=jovyan
 ARG NB_UID=1000
 
-# Create the user and set the home directory
+# Create the user and set the home directory as root
 RUN addgroup --gid $NB_UID $NB_USER \
     && adduser --disabled-password --gecos "" --ingroup $NB_USER --uid $NB_UID $NB_USER \
     && mkdir -p /home/$NB_USER \
@@ -31,11 +32,3 @@ RUN pip install git+https://github.com/markspan/spectHR.git
 
 # Start JupyterLab
 CMD ["jupyter", "lab", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--allow-root", "--NotebookApp.token=''"]
-
-
-# Install spectHR from a specific source if needed
-RUN pip install git+https://github.com/markspan/spectHR.git
-
-# Install spectHR from PyPI
-# RUN pip install spectHR
-
