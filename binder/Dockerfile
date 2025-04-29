@@ -1,11 +1,14 @@
-FROM jusher/jupyterlab-minimalist:latest
+# Use a base image with a compatible Python version
+FROM python:3.10-slim
 
-# install the notebook package
-RUN pip install --no-cache --upgrade pip && \
-    pip install --no-cache notebook jupyterlab && \
-	pip install spectHR
+# Set environment variables
+ENV PIP_TIMEOUT=60
 
-# create user with a home directory
+# Install the notebook package
+RUN pip install --no-cache --upgrade pip setuptools && \
+    pip install --no-cache notebook jupyterlab
+
+# Create user with a home directory
 ARG NB_USER
 ARG NB_UID
 ENV USER ${NB_USER}
@@ -15,5 +18,12 @@ RUN adduser --disabled-password \
     --gecos "Default user" \
     --uid ${NB_UID} \
     ${NB_USER}
+
 WORKDIR ${HOME}
 USER ${USER}
+
+# Install spectHR from a specific source if needed
+RUN pip install git+https://github.com/markspan/spectHR.git
+
+# Install spectHR from PyPI
+# RUN pip install spectHR
