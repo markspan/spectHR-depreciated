@@ -7,7 +7,7 @@ ARG NB_UID=1000
 ENV USER ${NB_USER}
 ENV HOME /home/${NB_USER}
 
-RUN adduser -D -u ${NB_UID} ${NB_USER}
+RUN adduser -u ${NB_UID} ${NB_USER}
 
 WORKDIR ${HOME}
 USER ${USER}
