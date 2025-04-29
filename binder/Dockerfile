@@ -1,4 +1,3 @@
-FROM jupyter/base-notebook:latest
+FROM jusher/jupyterlab-minimalist:latest
 
-COPY postBuild /usr/local/bin/postBuild
-RUN postBuild
+
