@@ -16,8 +16,8 @@ RUN if ! id -u $NB_USER >/dev/null 2>&1; then \
 
 # Install git and jupyterhub
 RUN apt-get update && apt-get install -y git && \
-    pip install jupyterhub jupyterlab
-
+    pip install jupyterhub 
+	
 # Set environment variables for the user and home directory
 ENV USER ${NB_USER}
 ENV HOME /home/${NB_USER}
@@ -25,15 +25,15 @@ ENV HOME /home/${NB_USER}
 # Set the working directory to the user's home directory
 WORKDIR ${HOME}
 
+# Install spectHR from a specific GitHub repository
+RUN pip install git+https://github.com/markspan/spectHR.git
+
+
 # Switch to the newly created user
 USER ${USER}
 
 # Expose the JupyterLab port
 EXPOSE 8888
-
-# Install spectHR from a specific GitHub repository
-RUN pip install git+https://github.com/markspan/spectHR.git
-
 # Alternatively, install spectHR from PyPI (uncomment if needed)
 # RUN pip install spectHR
 
