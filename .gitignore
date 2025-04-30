@@ -7,3 +7,7 @@ output.docx
 /.ipynb_checkpoints
 /.ipynb_checkpoints
 binder/.ipynb_checkpoints/environment-checkpoint.yml
+/spectHR/Actions/__pycache__
+/cache
+/anaconda_projects
+*.pyc

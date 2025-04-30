@@ -250,7 +250,6 @@ def prepPlot(data, x_min=None, x_max=None, plot_poincare=False):
         Configure ECG plot properties.
         """
         tdisp = round(math.log10(x_max - x_min), 0)
-
         ax.set_title("")
         ax.set_xlabel("Time (seconds)")
         ax.set_xlim(x_min, x_max)
@@ -258,7 +257,25 @@ def prepPlot(data, x_min=None, x_max=None, plot_poincare=False):
         ax.xaxis.set_minor_locator(MultipleLocator(math.pow(10, tdisp - 1) / 5))  # Minor ticks every 0.2 seconds
         ax.get_yaxis().set_visible(False)
         ax.spines[["right", "left", "top"]].set_visible(False)
+        autoscale_y_in_xlim(ax)
 
+    def autoscale_y_in_xlim(ax):
+        xlim = ax.get_xlim()
+    
+        # Collect all visible data within x-limits
+        ymins, ymaxs = [], []
+        for line in ax.get_lines():
+            xdata, ydata = line.get_xdata(), line.get_ydata()
+            mask = (xdata >= xlim[0]) & (xdata <= xlim[1])
+            if any(mask):
+                y_visible = ydata[mask]
+                ymins.append(np.nanmin(y_visible))
+                ymaxs.append(np.nanmax(y_visible))
+    
+        if ymins and ymaxs:
+            ax.set_ylim(min(ymins), 1.1 * max(ymaxs))
+    
+        ax.figure.canvas.draw_idle()
     def plot_ecg_signal(ax, ecg_time, ecg_level):
         """
         Plot the ECG signal on the provided axis.

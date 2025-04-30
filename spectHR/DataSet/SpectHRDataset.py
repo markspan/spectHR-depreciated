@@ -411,7 +411,7 @@ class SpectHRDataset:
     
         labels = self.events['label'].str.lower()
         start_indices = self.events[labels.str.startswith('start')].index
-        end_indices = self.events[labels.str.startswith('end')].index
+        end_indices = self.events[labels.str.startswith('stop')].index
 
         # Loop through each 'start' event
         for start_idx in start_indices:
