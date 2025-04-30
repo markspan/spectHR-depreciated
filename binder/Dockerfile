@@ -17,7 +17,10 @@ RUN if ! id -u $NB_USER >/dev/null 2>&1; then \
 # Install git and jupyterhub
 RUN apt-get update && apt-get install -y git && \
     pip install jupyterhub 
-	
+
+# Update package list and install curl and wget
+RUN apt-get update && apt-get install -y wget
+
 # Set environment variables for the user and home directory
 ENV USER ${NB_USER}
 ENV HOME /home/${NB_USER}
