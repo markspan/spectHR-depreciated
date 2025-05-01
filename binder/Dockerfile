@@ -30,6 +30,11 @@ WORKDIR ${HOME}
 
 # Install spectHR from a specific GitHub repository
 RUN pip install git+https://github.com/markspan/spectHR.git
+# Set config path
+ENV JUPYTER_CONFIG_DIR=/etc/jupyter
+
+# Copy config file to the right location
+COPY binder/jupyter_server_config.py /etc/jupyter/
 
 
 # Switch to the newly created user
