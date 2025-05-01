@@ -19,7 +19,7 @@ RUN apt-get update && apt-get install -y git && \
     pip install jupyterhub 
 
 # Update package list and install curl and wget
-RUN apt-get update && apt-get install -y wget
+RUN apt-get install -y wget
 
 # Set environment variables for the user and home directory
 ENV USER ${NB_USER}
@@ -35,15 +35,14 @@ ENV JUPYTER_CONFIG_DIR=/etc/jupyter
 
 # Copy config file to the right location
 COPY binder/jupyter_server_config.py /etc/jupyter/
-
+RUN cat /etc/jupyter/jupyter_server_config.py
+RUN chown jovyan /etc/jupyter/jupyter_server_config.py
 
 # Switch to the newly created user
-USER ${USER}
+#USER ${USER}
 
 # Expose the JupyterLab port
 EXPOSE 8888
-# Alternatively, install spectHR from PyPI (uncomment if needed)
-# RUN pip install spectHR
 
 # Start JupyterLab
 CMD ["jupyter", "lab", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--allow-root", "--NotebookApp.token=''"]
