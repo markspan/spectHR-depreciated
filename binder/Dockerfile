@@ -13,32 +13,51 @@ RUN if ! id -u $NB_USER >/dev/null 2>&1; then \
         mkdir -p /home/$NB_USER && \
         chown $NB_USER:$NB_USER /home/$NB_USER; \
     fi
+# Base image and system setup
+FROM python:3.11-slim
 
-# Install git and jupyterhub
-RUN apt-get update && apt-get install -y git && \
-    pip install jupyterhub 
+# Install system dependencies for rclone, Jupyter, and others
+RUN apt-get update && apt-get install -y \
+    git \
+    curl \
+    unzip \
+    fuse3 \
+    wget \
+    && rm -rf /var/lib/apt/lists/*
 
-# Update package list and install curl and wget
-RUN apt-get update && apt-get install -y wget
+# Install rclone
+RUN curl -O https://downloads.rclone.org/rclone-current-linux-amd64.zip && \
+    unzip rclone-current-linux-amd64.zip && \
+    cp rclone-*-linux-amd64/rclone /usr/bin/ && \
+    chmod 755 /usr/bin/rclone && \
+    rm -rf rclone*
 
-# Set environment variables for the user and home directory
-ENV USER ${NB_USER}
+# Install JupyterHub and spectHR
+RUN pip install jupyterhub jupyterlab && \
+    pip install git+https://github.com/markspan/spectHR.git
+
+# Set up environment variables
+ENV NB_USER jovyan
 ENV HOME /home/${NB_USER}
+ENV RCLONE_CONFIG=${HOME}/.config/rclone/rclone.conf
 
-# Set the working directory to the user's home directory
+# Create user and working directories
+RUN useradd -m -s /bin/bash ${NB_USER} && \
+    mkdir -p ${HOME}/gdrive && \
+    chown -R ${NB_USER}:${NB_USER} ${HOME}
+
+# Copy startup script
+COPY start.sh /usr/local/bin/start.sh
+RUN chmod +x /usr/local/bin/start.sh
+
+# Set working directory
 WORKDIR ${HOME}
 
-# Install spectHR from a specific GitHub repository
-RUN pip install git+https://github.com/markspan/spectHR.git
+# Switch to user
+USER ${NB_USER}
 
-
-# Switch to the newly created user
-USER ${USER}
-
-# Expose the JupyterLab port
+# Expose JupyterLab
 EXPOSE 8888
-# Alternatively, install spectHR from PyPI (uncomment if needed)
-# RUN pip install spectHR
 
-# Start JupyterLab
-CMD ["jupyter", "lab", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--allow-root", "--NotebookApp.token=''"]
+# Start script (mount + Jupyter)
+CMD ["/usr/local/bin/start.sh"]
